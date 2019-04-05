@@ -1,0 +1,52 @@
+version: '3.4'
+
+services:
+  eureka-1:
+    image: docker.nexus.archi-lab.io/archilab/coalbase-service-discovery:${BUILD_ID}
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - TZ=Europe/Berlin
+      - EUREKA_REDUNDANT=eureka-2
+      - EUREKA_NAME=eureka-1
+    networks:
+      - coalbase_backend
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
+  eureka-2:
+    image: docker.nexus.archi-lab.io/archilab/coalbase-service-discovery:${BUILD_ID}
+      deploy:
+        replicas: 1
+        update_config:
+          parallelism: 1
+          delay: 10s
+          order: start-first
+        restart_policy:
+          condition: on-failure
+          delay: 5s
+          max_attempts: 3
+          window: 120s
+      environment:
+        - TZ=Europe/Berlin
+        - EUREKA_REDUNDANT=eureka-1
+        - EUREKA_NAME=eureka-2
+      networks:
+        - coalbase_backend
+      logging:
+        driver: gelf
+        options:
+          gelf-address: "udp://127.0.0.1:12201"
+networks:
+  coalbase_backend:
+    external: true

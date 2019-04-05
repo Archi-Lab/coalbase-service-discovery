@@ -1,0 +1,11 @@
+spring:
+  profiles: ${EUREKA_NAME}
+server:
+  port: 8761
+eureka:
+  instance:
+    hostname: ${EUREKA_NAME}
+  client:
+    serviceUrl:
+      defaultZone: https://${EUREKA_REDUNDANT}/eureka/
+
