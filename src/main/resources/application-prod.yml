@@ -8,5 +8,5 @@ eureka:
     hostname: ${EUREKA_NAME}
   client:
     serviceUrl:
-      defaultZone: http://${EUREKA_REDUNDANT}/eureka/
+      defaultZone: http://${EUREKA_REDUNDANT}:8761/eureka/
 
