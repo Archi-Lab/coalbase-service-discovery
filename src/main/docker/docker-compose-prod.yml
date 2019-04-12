@@ -14,10 +14,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      environment:
-        - TZ=Europe/Berlin
-        - EUREKA_REDUNDANT=eureka-2
-        - EUREKA_NAME=eureka-1
+    environment:
+      - TZ=Europe/Berlin
+      - EUREKA_REDUNDANT=eureka-2
+      - EUREKA_NAME=eureka-1
     networks:
       - coalbase_backend
     logging:
