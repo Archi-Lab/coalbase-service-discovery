@@ -19,6 +19,7 @@ services:
       - EUREKA_REDUNDANT=eureka-2
       - EUREKA_NAME=eureka-1
     networks:
+      - discovery
       - coalbase_backend
     logging:
       driver: gelf
@@ -42,11 +43,13 @@ services:
       - EUREKA_REDUNDANT=eureka-1
       - EUREKA_NAME=eureka-2
     networks:
+      - discovery
       - coalbase_backend
     logging:
       driver: gelf
       options:
         gelf-address: "udp://127.0.0.1:12201"
 networks:
+  discovery:
   coalbase_backend:
     external: true
