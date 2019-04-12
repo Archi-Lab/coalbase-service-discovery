@@ -2,21 +2,12 @@
 server:
   port: 8761
 
-eureka:
-  instance:
-    hostname: localhost
-    instanceId: ${spring.application.name}:${server.port}
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-
 logging:
   level:
-    com.netflix.eureka: INFO
+    com.netflix.eureka: DEBUG
     com.netflix.discovery: INFO
     org.springframework.cloud: DEBUG
+
 spring:
   profiles:
     active: local

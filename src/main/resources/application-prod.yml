@@ -1,7 +1,7 @@
 ---
 spring:
   application:
-    name: ${EUREKA_NAME}
+    name: eureka
 
 eureka:
   instance:
