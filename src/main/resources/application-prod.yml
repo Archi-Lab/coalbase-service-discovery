@@ -1,9 +1,7 @@
 spring:
-  profiles: ${EUREKA_NAME}
   application:
     name: ${EUREKA_NAME}
-server:
-  port: 8761
+
 eureka:
   instance:
     hostname: ${EUREKA_NAME}

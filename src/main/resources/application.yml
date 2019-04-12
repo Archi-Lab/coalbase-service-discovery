@@ -17,5 +17,5 @@ logging:
     com.netflix.discovery: INFO
     org.springframework.cloud: DEBUG
 spring:
-  application:
-    name: localhost-eureka
+  profiles:
+    active: local
