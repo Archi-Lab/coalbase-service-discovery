@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  eureka-1:
+    image: docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev
+    environment:
+      - TZ=Europe/Berlin
+      - EUREKA_REDUNDANT=eureka-2
+      - EUREKA_NAME=eureka-1
+    networks:
+      - discovery
+      - coalbase_backend
+networks:
+  discovery:
+  coalbase_backend:
+    external: true

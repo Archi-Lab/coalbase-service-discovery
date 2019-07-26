@@ -77,7 +77,12 @@ pipeline {
         stage('Docker build Dev') {
             steps {
                 updateGitlabCommitStatus name: "Building", state: "running"
-                sh "echo there is no dev build!"
+                sh "docker build -f ./Dockerfile-dev -t docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev ."
+				script {
+                    docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
+                        sh "docker push docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev"
+                    }
+				}
             }
             post {
                 success {
