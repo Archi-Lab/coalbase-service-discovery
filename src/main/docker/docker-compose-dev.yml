@@ -10,6 +10,8 @@ services:
     networks:
       - discovery
       - coalbase_backend
+    ports:
+      - 8761:8761
 networks:
   discovery:
   coalbase_backend:
