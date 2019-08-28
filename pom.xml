@@ -1,35 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.4.RELEASE</version>
+  </parent>
+
+  <groupId>de.archilab.coalbase</groupId>
   <artifactId>coalbase-service-discovery</artifactId>
+  <version>${revision}${changelist}</version>
+
+  <name>service-discovery</name>
+  <description>coalbase-service-discovery</description>
+
+  <properties>
+    <dockerfile-maven.version>1.4.10</dockerfile-maven.version>
+    <docker.image.prefix>docker.nexus.archi-lab.io/archilab</docker.image.prefix>
+    <java.version>1.8</java.version>
+    <jacoco-version>0.8.1</jacoco-version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <revision>0.1.0</revision>
+    <changelist>-SNAPSHOT</changelist>
+    <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
+    <tidy-maven.version>1.1.0</tidy-maven.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <groupId>org.springframework.boot</groupId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>tidy-maven-plugin</artifactId>
+        <version>${tidy-maven.version}</version>
+        <executions>
+          <execution>
+            <id>tidy-pom</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>pom</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
         <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>${dockerfile-maven.version}</version>
         <configuration>
+          <contextDirectory>${project.basedir}</contextDirectory>
           <repository>${docker.image.prefix}/${project.artifactId}</repository>
         </configuration>
         <executions>
           <execution>
+            <id>docker-build</id>
             <goals>
               <goal>build</goal>
             </goals>
-            <id>default</id>
-            <phase>install</phase>
+          </execution>
+          <execution>
+            <id>docker-tag</id>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <tag>${project.version}</tag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>docker-push</id>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <tag>${project.version}</tag>
+            </configuration>
           </execution>
         </executions>
-        <groupId>com.spotify</groupId>
-        <version>1.4.10</version>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
+            <id>unpack</id>
+            <phase>package</phase>
             <configuration>
               <artifactItems>
                 <artifactItem>
@@ -42,40 +124,40 @@
             <goals>
               <goal>unpack</goal>
             </goals>
-            <id>unpack</id>
-            <phase>package</phase>
           </execution>
         </executions>
-        <groupId>org.apache.maven.plugins</groupId>
       </plugin>
       <plugin>
+        <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-version}</version>
         <executions>
           <execution>
+            <id>default-prepare-agent</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
-            <id>default-prepare-agent</id>
           </execution>
           <execution>
+            <id>default-prepare-agent-integration</id>
             <goals>
               <goal>prepare-agent-integration</goal>
             </goals>
-            <id>default-prepare-agent-integration</id>
           </execution>
           <execution>
+            <id>default-report</id>
             <goals>
               <goal>report</goal>
             </goals>
-            <id>default-report</id>
           </execution>
           <execution>
+            <id>default-report-integration</id>
             <goals>
               <goal>report-integration</goal>
             </goals>
-            <id>default-report-integration</id>
           </execution>
           <execution>
+            <id>default-check</id>
             <configuration>
               <rules>
                 <!--  implementation is needed only for Maven 2  -->
@@ -95,62 +177,23 @@
             <goals>
               <goal>check</goal>
             </goals>
-            <id>default-check</id>
           </execution>
         </executions>
-        <groupId>org.jacoco</groupId>
-        <version>0.8.1</version>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>@{argLine}</argLine>
         </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <dependency>
-      <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-      <groupId>org.springframework.cloud</groupId>
-    </dependency>
-    <dependency>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <groupId>org.springframework.boot</groupId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <groupId>org.springframework.cloud</groupId>
-        <scope>import</scope>
-        <type>pom</type>
-        <version>${spring-cloud.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  <description>coalbase-service-discovery</description>
-  <groupId>de.archilab.coalbase</groupId>
-  <modelVersion>4.0.0</modelVersion>
-
-  <name>service-discovery</name>
-
-  <parent>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <groupId>org.springframework.boot</groupId>
-    <relativePath/>
-    <version>2.1.4.RELEASE</version> <!-- lookup parent from repository -->
-  </parent>
-
-  <properties>
-    <docker.image.prefix>docker.nexus.archi-lab.io/archilab</docker.image.prefix>
-    <java.version>1.8</java.version>
-    <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
-  </properties>
-
-  <version>0.0.1-SNAPSHOT</version>
-
 </project>
