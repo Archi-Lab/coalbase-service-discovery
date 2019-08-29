@@ -1,8 +1,13 @@
 node {
     def changelist = "${env.BUILD_NUMBER}"
+    def pom
+    def image
 
     stage('Checkout') {
         checkout scm
+
+        pom = readMavenPom file: 'pom.xml'
+        image = pom.getArtifactId()
     }
 
     docker.image('maven:3.6.1-jdk-8-alpine').inside {
@@ -53,21 +58,16 @@ node {
         stage('Docker build Dev') {
             sh "apk -U add docker"
             sh "docker build -f ./Dockerfile-dev \
-                -t docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev ."
+                -t docker.nexus.archi-lab.io/archilab/${image}-dev ."
 
             docker.withRegistry('https://docker.nexus.archi-lab.io', 'archilab-nexus-jenkins') {
-                sh "docker push docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev"
+                sh "docker push docker.nexus.archi-lab.io/archilab/${image}-dev"
             }
         }
     }
 
     stage('Deploy') {
         docker.withServer('tcp://10.10.10.51:2376', 'coalbase-prod-certs') {
-            def pom = readMavenPom file: 'pom.xml'
-            def image = pom.getArtifactId()
-//            def revision = pom.getProperties().getProperty('revision')
-//            def tag = "${revision}${changelist}"
-
             docker.withRegistry('https://docker.nexus.archi-lab.io', 'archilab-nexus-jenkins') {
                 sh "env IMAGE=${image} TAG=${changelist} docker stack deploy --with-registry-auth \
                     -c src/main/docker/docker-compose.yml \
