@@ -51,6 +51,7 @@ node {
         }
 
         stage('Docker build Dev') {
+            sh "apk -U add docker"
             sh "docker build -f ./Dockerfile-dev \
                 -t docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev ."
 
