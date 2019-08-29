@@ -8,7 +8,7 @@
     <version>2.1.4.RELEASE</version>
   </parent>
 
-  <groupId>de.archilab.coalbase</groupId>
+  <groupId>io.archilab.coalbase</groupId>
   <artifactId>coalbase-service-discovery</artifactId>
   <version>${revision}${changelist}</version>
 
@@ -67,65 +67,11 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>com.spotify</groupId>
-        <artifactId>dockerfile-maven-plugin</artifactId>
-        <version>${dockerfile-maven.version}</version>
-        <configuration>
-          <contextDirectory>${project.basedir}</contextDirectory>
-          <repository>${docker.image.prefix}/${project.artifactId}</repository>
-        </configuration>
-        <executions>
-          <execution>
-            <id>docker-build</id>
-            <goals>
-              <goal>build</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>docker-tag</id>
-            <goals>
-              <goal>tag</goal>
-            </goals>
-            <configuration>
-              <tag>${project.version}</tag>
-            </configuration>
-          </execution>
-          <execution>
-            <id>docker-push</id>
-            <goals>
-              <goal>push</goal>
-            </goals>
-            <configuration>
-              <tag>${project.version}</tag>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>package</phase>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <groupId>${project.groupId}</groupId>
-                  <version>${project.version}</version>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>@{argLine}</argLine>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -181,17 +127,71 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>package</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <groupId>${project.groupId}</groupId>
+                  <version>${project.version}</version>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>${dockerfile-maven.version}</version>
+        <configuration>
+          <contextDirectory>${project.basedir}</contextDirectory>
+          <repository>${docker.image.prefix}/${project.artifactId}</repository>
+        </configuration>
+        <executions>
+          <execution>
+            <id>docker-build</id>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>docker-tag</id>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <tag>${project.version}</tag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>docker-push</id>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <tag>${project.version}</tag>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
           <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>@{argLine}</argLine>
         </configuration>
       </plugin>
     </plugins>
