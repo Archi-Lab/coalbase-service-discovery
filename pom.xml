@@ -12,7 +12,7 @@
   <artifactId>coalbase-service-discovery</artifactId>
   <version>${revision}${changelist}</version>
 
-  <name>service-discovery</name>
+  <name>coalbase-service-discovery</name>
   <description>coalbase-service-discovery</description>
 
   <properties>
