@@ -18,6 +18,7 @@ services:
       - TZ=Europe/Berlin
       - EUREKA_REDUNDANT=eureka-2
       - EUREKA_NAME=eureka-1
+      - SPRING_PROFILES_ACTIVE=prod
     networks:
       - discovery
       - coalbase_backend

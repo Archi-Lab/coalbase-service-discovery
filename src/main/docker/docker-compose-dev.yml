@@ -2,11 +2,12 @@ version: '3.4'
 
 services:
   eureka-1:
-    image: docker.nexus.archi-lab.io/archilab/coalbase-service-discovery-dev
+    image: docker.nexus.archi-lab.io/archilab/coalbase-service-discovery
     environment:
       - TZ=Europe/Berlin
       - EUREKA_REDUNDANT=eureka-2
       - EUREKA_NAME=eureka-1
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - discovery
       - coalbase_backend
